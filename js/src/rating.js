@@ -489,7 +489,7 @@ class Rating extends BaseComponent {
 
   static jQueryInterface(config) {
     return this.each(function () {
-      const data = Rating.getOrCreateInstance(this)
+      const data = Rating.getOrCreateInstance(this, config)
 
       if (typeof config !== 'string') {
         return
