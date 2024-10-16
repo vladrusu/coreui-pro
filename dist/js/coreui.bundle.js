@@ -1863,7 +1863,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = Calendar.getOrCreateInstance(this);
+        const data = Calendar.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -5192,7 +5192,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = TimePicker.getOrCreateInstance(this);
+        const data = TimePicker.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -5957,7 +5957,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = DateRangePicker.getOrCreateInstance(this);
+        const data = DateRangePicker.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -6091,7 +6091,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = DatePicker.getOrCreateInstance(this);
+        const data = DatePicker.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -6663,7 +6663,8 @@
    */
 
   EventHandler.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$5, event => {
-    event.preventDefault();
+    // commented because otherwise this won't trigger submit: <button type="submit" data-coreui-toggle="loading-button">Save</button>
+    //event.preventDefault()
     const button = event.target.closest(SELECTOR_DATA_TOGGLE$5);
     const data = LoadingButton.getOrCreateInstance(button);
     data.start();
@@ -9466,6 +9467,7 @@
   const EVENT_MOUSELEAVE = `mouseleave${EVENT_KEY$4}`;
   const CLASS_NAME_ACTIVE$2 = 'active';
   const CLASS_NAME_DISABLED = 'disabled';
+  const CLASS_NAME_READONLY = 'readonly';
   const CLASS_NAME_RATING = 'rating';
   const CLASS_NAME_RATING_ITEM = 'rating-item';
   const CLASS_NAME_RATING_ITEM_ICON = 'rating-item-icon';
@@ -9739,6 +9741,9 @@
       if (this._config.disabled) {
         this._element.classList.add(CLASS_NAME_DISABLED);
       }
+      if (this._config.readOnly) {
+        this._element.classList.add(CLASS_NAME_READONLY);
+      }
       this._element.setAttribute('role', 'radiogroup');
       Array.from({
         length: this._config.itemCount
@@ -9853,7 +9858,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = Rating.getOrCreateInstance(this);
+        const data = Rating.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }

@@ -36,6 +36,7 @@
   const EVENT_MOUSELEAVE = `mouseleave${EVENT_KEY}`;
   const CLASS_NAME_ACTIVE = 'active';
   const CLASS_NAME_DISABLED = 'disabled';
+  const CLASS_NAME_READONLY = 'readonly';
   const CLASS_NAME_RATING = 'rating';
   const CLASS_NAME_RATING_ITEM = 'rating-item';
   const CLASS_NAME_RATING_ITEM_ICON = 'rating-item-icon';
@@ -309,6 +310,9 @@
       if (this._config.disabled) {
         this._element.classList.add(CLASS_NAME_DISABLED);
       }
+      if (this._config.readOnly) {
+        this._element.classList.add(CLASS_NAME_READONLY);
+      }
       this._element.setAttribute('role', 'radiogroup');
       Array.from({
         length: this._config.itemCount
@@ -423,7 +427,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = Rating.getOrCreateInstance(this);
+        const data = Rating.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
