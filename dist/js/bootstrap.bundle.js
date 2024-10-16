@@ -6032,7 +6032,7 @@
   const EVENT_KEYUP_DATA_API$2 = `keyup${EVENT_KEY$c}${DATA_API_KEY$9}`;
   const EVENT_LOAD_DATA_API$7 = `load${EVENT_KEY$c}${DATA_API_KEY$9}`;
   const CLASS_NAME_SHOW$a = 'show';
-  const SELECTOR_CALENDAR = '.calendar';
+  const SELECTOR_CALENDAR = '.calendars';
   const SELECTOR_DATA_TOGGLE$7 = '[data-bs-toggle="date-picker"]:not(.disabled):not(:disabled)';
   const SELECTOR_DATA_TOGGLE_SHOWN$1 = `${SELECTOR_DATA_TOGGLE$7}.${CLASS_NAME_SHOW$a}`;
   const Default$f = {
