@@ -32,7 +32,6 @@
   const EVENT_KEYUP_DATA_API = `keyup${EVENT_KEY}${DATA_API_KEY}`;
   const EVENT_LOAD_DATA_API = `load${EVENT_KEY}${DATA_API_KEY}`;
   const CLASS_NAME_SHOW = 'show';
-  const SELECTOR_CALENDAR = '.calendar';
   const SELECTOR_DATA_TOGGLE = '[data-coreui-toggle="date-picker"]:not(.disabled):not(:disabled)';
   const SELECTOR_DATA_TOGGLE_SHOWN = `${SELECTOR_DATA_TOGGLE}.${CLASS_NAME_SHOW}`;
   const Default = {
@@ -64,19 +63,13 @@
     }
 
     // Overrides
-    _addCalendarEventListeners() {
-      super._addCalendarEventListeners();
-      for (const calendar of SelectorEngine.find(SELECTOR_CALENDAR, this._element)) {
-        EventHandler.on(calendar, 'startDateChange.coreui.calendar', event => {
-          this._startDate = event.date;
-          this._startInput.value = this._setInputValue(event.date);
-          this._selectEndDate = false;
-          this._calendar.update(this._getCalendarConfig());
-          EventHandler.trigger(this._element, EVENT_DATE_CHANGE, {
-            date: event.date
-          });
+    _addEventListeners() {
+      super._addEventListeners();
+      EventHandler.on(this._element, 'startDateChange.coreui.date-range-picker', event => {
+        EventHandler.trigger(this._element, EVENT_DATE_CHANGE, {
+          date: event.date
         });
-      }
+      });
     }
 
     // Static
@@ -91,7 +84,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = DatePicker.getOrCreateInstance(this);
+        const data = DatePicker.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }

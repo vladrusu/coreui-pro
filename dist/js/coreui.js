@@ -1270,7 +1270,7 @@
   const SELECTOR_BTN_NEXT = '.btn-next';
   const SELECTOR_BTN_PREV = '.btn-prev';
   const SELECTOR_BTN_YEAR = '.btn-year';
-  const SELECTOR_CALENDAR$2 = '.calendar';
+  const SELECTOR_CALENDAR$1 = '.calendar';
   const SELECTOR_CALENDAR_CELL = '.calendar-cell';
   const SELECTOR_CALENDAR_ROW = '.calendar-row';
   const SELECTOR_DATA_TOGGLE$b = '[data-coreui-toggle="calendar"]';
@@ -1391,7 +1391,7 @@
       const target = event.target.classList.contains(CLASS_NAME_CALENDAR_CELL_INNER) ? event.target.parentElement : event.target;
       const date = this._getDate(target);
       const cloneDate = new Date(date);
-      const index = Manipulator.getDataAttribute(target.closest(SELECTOR_CALENDAR$2), 'calendar-index');
+      const index = Manipulator.getDataAttribute(target.closest(SELECTOR_CALENDAR$1), 'calendar-index');
       if (isDateDisabled(date, this._config.minDate, this._config.maxDate, this._config.disabledDates)) {
         return;
       }
@@ -1882,7 +1882,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = Calendar.getOrCreateInstance(this);
+        const data = Calendar.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -3372,7 +3372,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = TimePicker.getOrCreateInstance(this);
+        const data = TimePicker.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -3477,7 +3477,7 @@
   const CLASS_NAME_TIME_PICKER = 'time-picker';
   const CLASS_NAME_TIME_PICKERS = 'date-picker-timepickers';
   const CLASS_NAME_WAS_VALIDATED = 'was-validated';
-  const SELECTOR_CALENDAR$1 = '.calendars';
+  const SELECTOR_CALENDAR = '.calendars';
   const SELECTOR_DATA_TOGGLE$8 = '[data-coreui-toggle="date-range-picker"]:not(.disabled):not(:disabled)';
   const SELECTOR_DATA_TOGGLE_SHOWN$2 = `${SELECTOR_DATA_TOGGLE$8}.${CLASS_NAME_SHOW$b}`;
   const SELECTOR_INPUT = '.date-picker-input';
@@ -3702,11 +3702,16 @@
         this._calendar.update(this._getCalendarConfig());
       });
       EventHandler.on(this._startInput, EVENT_INPUT, event => {
-        const date = this._config.inputDateParse ? this._config.inputDateParse(event.target.value) : getLocalDateFromString(event.target.value, this._config.locale, this._config.timepicker);
-        if (date instanceof Date && date.getTime()) {
+        const date = this._parseDate(event.target.value);
+
+        // valid date or empty date
+        if (date instanceof Date && !isNaN(date) || date === null) {
           this._startDate = date;
           this._calendarDate = date;
           this._calendar.update(this._getCalendarConfig());
+          EventHandler.trigger(this._element, EVENT_START_DATE_CHANGE, {
+            date: date
+          });
         }
       });
       EventHandler.on(this._startInput.form, EVENT_SUBMIT, () => {
@@ -3731,11 +3736,16 @@
         this._calendar.update(this._getCalendarConfig());
       });
       EventHandler.on(this._endInput, EVENT_INPUT, event => {
-        const date = this._config.inputDateParse ? this._config.inputDateParse(event.target.value) : getLocalDateFromString(event.target.value, this._config.locale, this._config.timepicker);
-        if (date instanceof Date && date.getTime()) {
+        const date = this._parseDate(event.target.value);
+
+        // valid date or empty date
+        if (date instanceof Date && !isNaN(date) || date === null) {
           this._endDate = date;
           this._calendarDate = date;
           this._calendar.update(this._getCalendarConfig());
+          EventHandler.trigger(this._element, EVENT_END_DATE_CHANGE, {
+            date: date
+          });
         }
       });
       EventHandler.on(window, EVENT_RESIZE$3, () => {
@@ -3743,7 +3753,7 @@
       });
     }
     _addCalendarEventListeners() {
-      for (const calendar of SelectorEngine.find(SELECTOR_CALENDAR$1, this._element)) {
+      for (const calendar of SelectorEngine.find(SELECTOR_CALENDAR, this._element)) {
         EventHandler.on(calendar, 'startDateChange.coreui.calendar', event => {
           this._changeStartDate(event.date);
           if (!this._config.range && !this._config.footer && !this._config.timepicker) {
@@ -4090,7 +4100,12 @@
       };
       this._popper = Popper__namespace.createPopper(this._togglerElement, this._menu, popperConfig);
     }
+    _parseDate(str) {
+      if (!str) return null;
+      return this._config.inputDateParse ? this._config.inputDateParse(str) : getLocalDateFromString(str, this._config.locale, this._config.timepicker);
+    }
     _formatDate(date) {
+      if (!date) return '';
       if (this._config.inputDateFormat) {
         return this._config.inputDateFormat(date instanceof Date ? new Date(date) : convertToDateObject(date, this._config.selectionType));
       }
@@ -4137,7 +4152,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = DateRangePicker.getOrCreateInstance(this);
+        const data = DateRangePicker.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -4212,7 +4227,6 @@
   const EVENT_KEYUP_DATA_API$2 = `keyup${EVENT_KEY$c}${DATA_API_KEY$9}`;
   const EVENT_LOAD_DATA_API$7 = `load${EVENT_KEY$c}${DATA_API_KEY$9}`;
   const CLASS_NAME_SHOW$a = 'show';
-  const SELECTOR_CALENDAR = '.calendar';
   const SELECTOR_DATA_TOGGLE$7 = '[data-coreui-toggle="date-picker"]:not(.disabled):not(:disabled)';
   const SELECTOR_DATA_TOGGLE_SHOWN$1 = `${SELECTOR_DATA_TOGGLE$7}.${CLASS_NAME_SHOW$a}`;
   const Default$f = {
@@ -4244,19 +4258,13 @@
     }
 
     // Overrides
-    _addCalendarEventListeners() {
-      super._addCalendarEventListeners();
-      for (const calendar of SelectorEngine.find(SELECTOR_CALENDAR, this._element)) {
-        EventHandler.on(calendar, 'startDateChange.coreui.calendar', event => {
-          this._startDate = event.date;
-          this._startInput.value = this._setInputValue(event.date);
-          this._selectEndDate = false;
-          this._calendar.update(this._getCalendarConfig());
-          EventHandler.trigger(this._element, EVENT_DATE_CHANGE, {
-            date: event.date
-          });
+    _addEventListeners() {
+      super._addEventListeners();
+      EventHandler.on(this._element, 'startDateChange.coreui.date-range-picker', event => {
+        EventHandler.trigger(this._element, EVENT_DATE_CHANGE, {
+          date: event.date
         });
-      }
+      });
     }
 
     // Static
@@ -4271,7 +4279,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = DatePicker.getOrCreateInstance(this);
+        const data = DatePicker.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
@@ -4843,7 +4851,8 @@
    */
 
   EventHandler.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$5, event => {
-    event.preventDefault();
+    // commented because otherwise this won't trigger submit: <button type="submit" data-coreui-toggle="loading-button">Save</button>
+    //event.preventDefault()
     const button = event.target.closest(SELECTOR_DATA_TOGGLE$5);
     const data = LoadingButton.getOrCreateInstance(button);
     data.start();
@@ -7646,6 +7655,7 @@
   const EVENT_MOUSELEAVE = `mouseleave${EVENT_KEY$4}`;
   const CLASS_NAME_ACTIVE$2 = 'active';
   const CLASS_NAME_DISABLED = 'disabled';
+  const CLASS_NAME_READONLY = 'readonly';
   const CLASS_NAME_RATING = 'rating';
   const CLASS_NAME_RATING_ITEM = 'rating-item';
   const CLASS_NAME_RATING_ITEM_ICON = 'rating-item-icon';
@@ -7919,6 +7929,9 @@
       if (this._config.disabled) {
         this._element.classList.add(CLASS_NAME_DISABLED);
       }
+      if (this._config.readOnly) {
+        this._element.classList.add(CLASS_NAME_READONLY);
+      }
       this._element.setAttribute('role', 'radiogroup');
       Array.from({
         length: this._config.itemCount
@@ -8033,7 +8046,7 @@
     }
     static jQueryInterface(config) {
       return this.each(function () {
-        const data = Rating.getOrCreateInstance(this);
+        const data = Rating.getOrCreateInstance(this, config);
         if (typeof config !== 'string') {
           return;
         }
