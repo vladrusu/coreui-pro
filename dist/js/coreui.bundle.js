@@ -7122,7 +7122,6 @@
    */
 
   EventHandler.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$6, event => {
-    event.preventDefault();
     const button = event.target.closest(SELECTOR_DATA_TOGGLE$6);
     const data = LoadingButton.getOrCreateInstance(button);
     data.start();

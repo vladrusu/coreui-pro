@@ -600,7 +600,7 @@
         return {};
       }
       const attributes = {};
-      Object.keys(element.dataset).filter(key => key.startsWith('bs') && !key.startsWith('bsConfig'));
+      const bsKeys = Object.keys(element.dataset).filter(key => key.startsWith('bs') && !key.startsWith('bsConfig'));
       for (const key of bsKeys) {
         let pureKey = key.replace(/^bs/, '');
         pureKey = pureKey.charAt(0).toLowerCase() + pureKey.slice(1);
@@ -5302,7 +5302,6 @@
    */
 
   EventHandler.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$6, event => {
-    event.preventDefault();
     const button = event.target.closest(SELECTOR_DATA_TOGGLE$6);
     const data = LoadingButton.getOrCreateInstance(button);
     data.start();
