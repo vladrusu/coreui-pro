@@ -738,7 +738,7 @@
           weekNumber,
           year
         } = getISOWeekNumberAndYear(day.date);
-        const lastWeek = weeks.at(-1);
+        const lastWeek = weeks[weeks.length - 1];
         if (lastWeek) {
           lastWeek.week = {
             number: weekNumber,
@@ -746,7 +746,7 @@
           };
         }
       }
-      const lastWeek = weeks.at(-1);
+      const lastWeek = weeks[weeks.length - 1];
       if (lastWeek) {
         lastWeek.days.push(day);
       }
